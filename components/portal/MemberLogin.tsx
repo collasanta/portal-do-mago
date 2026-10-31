@@ -46,6 +46,7 @@ export function MemberLogin({ me, onChange }: { me: Me | null; onChange: () => v
     const { ok, d } = await post("/api/portal/login/start", { email: email.trim() }).catch(() => ({ ok: false, d: { error: "Sem conexão." } as Record<string, string> }));
     setBusy(false);
     if (!ok) return setErr(d.error || "Não deu certo. Tente de novo.");
+    if (d.direct) return onChange();
     setStep("code");
     setCode("");
     setMsg(`Mandamos um código de 6 números para ${email.trim()}. Olhe também o spam.`);
