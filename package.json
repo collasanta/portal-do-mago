@@ -1,0 +1,39 @@
+{
+  "name": "portal-do-mago",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "prebuild": "node cli/fetch-model.mjs",
+    "kiwify:sync": "node cli/kiwify-sync.mjs",
+    "db:migrate": "node cli/db-migrate.mjs",
+    "course:import": "node cli/import-course.mjs",
+    "course:export": "node cli/export-course.mjs",
+    "course:transcribe": "node cli/transcribe.mjs",
+    "course:ingest": "node cli/fetch-model.mjs && node cli/ingest.mjs",
+    "course:chapters": "node cli/fetch-model.mjs && node cli/chapters.mjs",
+    "secrets": "node cli/new-secrets.mjs",
+    "vercel:env": "node cli/vercel-env-push.mjs"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^1.3.0",
+    "@huggingface/transformers": "^4.3.2",
+    "next": "16.4.3",
+    "pg": "^8.23.1",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "server-only": "^0.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/pg": "^8.23.1",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.4.3",
+    "typescript": "^5"
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "portaldomago-realtime",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-10-01",
+  "observability": { "enabled": true },
+  "durable_objects": {
+    "bindings": [
+      { "name": "ROOM", "class_name": "Room" },
+      // Lives anteriores: recordings metadata + transcription queue (one instance, "archive")
+      { "name": "ARCHIVE", "class_name": "Archive" }
+    ]
+  },
+  "migrations": [
+    { "tag": "v1", "new_sqlite_classes": ["Room"] },
+    { "tag": "v2", "new_sqlite_classes": ["Archive"] }
+  ],
+  // recordings (HLS fMP4 segments + audio pieces for Whisper)
+  "r2_buckets": [{ "binding": "LIVES", "bucket_name": "portaldomago-lives" }],
+  // Workers AI: Whisper transcription of the lives
+  "ai": { "binding": "AI" },
+  // NEXT_URL = endereço público do site (Vercel), sem barra no fim. TROCAR pelo seu (HANDOFF.md, passo 7).
+  "vars": { "NEXT_URL": "https://SEU-SITE.vercel.app" }
+  // Secrets (wrangler secret put): ROOM_CODE, ADMIN_KEY (legacy admin), ADMIN_KEYS (named keys JSON), CALLS_APP_ID, CALLS_APP_SECRET (Realtime SFU), TURN_KEY_ID, TURN_KEY_TOKEN,
+  //   MEMBER_TOKEN_SECRET (= PORTAL_MEMBER_TOKEN_SECRET on Vercel), AUTH_MODE (code|both|kiwify), KIWIFY_ONLY_ROOMS, BOTH_ROOMS (comma lists)
+  //   LIVES_SECRET (optional: playback-token signing key; falls back to CALLS_APP_SECRET / ADMIN_KEY)
+}

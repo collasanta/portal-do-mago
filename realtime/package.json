@@ -1,0 +1,15 @@
+{
+  "name": "portaldomago-realtime",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "types": "wrangler types"
+  },
+  "devDependencies": {
+    "wrangler": "^4.86.0",
+    "typescript": "^5",
+    "ws": "^8.18.0"
+  }
+}

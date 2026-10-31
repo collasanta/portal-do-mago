@@ -1,0 +1,14 @@
+/* Login de membro (e-mail da compra) na tela de entrada. Arquivo próprio pra não brigar com portal.css. */
+.pm-member { display: flex; flex-direction: column; gap: 8px; }
+.pm-member-row { display: flex; gap: 8px; align-items: stretch; }
+.pm-member-row .pm-input { flex: 1; min-width: 0; }
+.pm-member-row .pm-btn { white-space: nowrap; }
+.pm-member-ok {
+  background: #e7f6e9; color: #1d5e2a; border: 2px solid #9fd3a8; border-radius: 8px;
+  padding: 9px 12px; font-size: 14px; overflow-wrap: anywhere;
+}
+.pm-linkbtn {
+  align-self: flex-start; background: none; border: 0; padding: 2px 0; cursor: pointer;
+  color: var(--pm-blue, #0066ff); font-size: 13px; font-weight: 600; text-decoration: underline; text-underline-offset: 2px;
+}
+@media (max-width: 420px) { .pm-member-row { flex-direction: column; } }

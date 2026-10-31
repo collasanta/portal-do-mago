@@ -1,0 +1,14 @@
+/* Lives anteriores (reuses the Oráculo shell: app/oraculo/oraculo.css) */
+.lv-item { align-items: flex-start; }
+.lv-play { flex: none; display: grid; place-items: center; width: 36px; height: 36px; border-radius: 12px; font-size: 14px; color: var(--o-gold); background: color-mix(in oklab, var(--o-gold) 14%, transparent); }
+.lv-hidden { opacity: 0.6; }
+.lv-title:hover { color: var(--o-accent-ink); }
+.lv-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.lv-danger:hover { color: var(--o-danger) !important; }
+.lv-rename, .lv-row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.lv-rename input, .lv-row input { flex: 1; min-width: 160px; padding: 7px 10px; border-radius: 10px; border: 1px solid var(--o-line); background: var(--o-panel-2); color: var(--o-ink); font: inherit; }
+.lv-err { color: var(--o-danger); font-size: 13.5px; margin: 12px 0; }
+.lv-video { position: relative; width: 100%; aspect-ratio: 16 / 9; background: #000; border-radius: 14px; overflow: hidden; border: 1px solid var(--o-line); margin-bottom: 12px; }
+.lv-video video { width: 100%; height: 100%; display: block; background: #000; }
+.lv-code { padding: 16px; display: grid; gap: 10px; }
+.orc-embed .lv-page { padding-top: 12px; }

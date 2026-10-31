@@ -1,0 +1,32 @@
+# =====================================================================
+# Segredos do WORKER (Cloudflare). Em produção, cada um vai com:
+#   cd realtime && npx wrangler secret put NOME     (cola o valor quando pedir)
+# Este arquivo é só a lista. Para rodar local (npx wrangler dev), copie para .dev.vars.
+# NUNCA commite .dev.vars. Gere os aleatórios com: npm run secrets (na raiz).
+# =====================================================================
+
+# Código da sala (o que vai no link do grupo: /?c=CODIGO). Vazio = entra sem código.
+ROOM_CODE=
+# Chaves nomeadas, JSON NUMA LINHA SÓ. role "host" = Mago (selo MAGO, comanda a live), "admin" = moderação.
+# Cada key com pelo menos 12 caracteres. Link pessoal: https://SEU-SITE/?k=<key>
+ADMIN_KEYS={"admin":{"key":"TROCAR-chave-admin-longa","role":"admin"},"mago":{"key":"TROCAR-chave-host-longa","role":"host"}}
+# Chave admin reserva (legada). Opcional, mas recomendada.
+ADMIN_KEY=
+
+# MESMO valor de PORTAL_MEMBER_TOKEN_SECRET na Vercel (token de membro Kiwify)
+MEMBER_TOKEN_SECRET=
+# Modo de entrada: code | both | kiwify (mesmo valor de AUTH_MODE na Vercel)
+AUTH_MODE=code
+# Salas que forçam um modo (vírgulas). Recomendado: KIWIFY_ONLY_ROOMS=teste depois da Kiwify ligada
+KIWIFY_ONLY_ROOMS=
+BOTH_ROOMS=
+
+# Cloudflare Realtime SFU (vídeo da live): dashboard → Realtime → Serverless SFU → Create app
+CALLS_APP_ID=
+CALLS_APP_SECRET=
+# Cloudflare Realtime TURN (quem está atrás de rede difícil): Realtime → TURN Server → Create key
+TURN_KEY_ID=
+TURN_KEY_TOKEN=
+
+# Assina o token de 8 h que libera assistir gravações. Opcional (cai para CALLS_APP_SECRET / ADMIN_KEY).
+LIVES_SECRET=

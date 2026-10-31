@@ -1,0 +1,206 @@
+/* Oráculo do Mago: estilos escopados em .orc-shell (não vazam para a sala).
+   Cores: tokens do portal quando existirem (--pm-*, --background, --foreground), senão o tema escuro abaixo. */
+.orc-shell {
+  --o-bg: var(--pm-bg, var(--background, #0f0d16));
+  --o-panel: var(--pm-panel, #171425);
+  --o-panel-2: var(--pm-panel-2, #1e1a30);
+  --o-ink: var(--pm-ink, var(--foreground, #ece8f6));
+  --o-muted: var(--pm-muted, #a39cb8);
+  --o-line: var(--pm-line, #2c2740);
+  --o-accent: var(--pm-accent, #8b5cf6);
+  --o-accent-ink: var(--pm-accent-ink, #c4b5fd);
+  --o-gold: var(--pm-gold, #f5c86b);
+  --o-danger: #fca5a5;
+  --o-radius: 14px;
+
+  color-scheme: dark;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100dvh;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--o-bg);
+  color: var(--o-ink);
+  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+}
+.orc-shell * { scrollbar-width: thin; scrollbar-color: var(--o-line) transparent; }
+.orc-shell button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+.orc-shell button:disabled { cursor: default; }
+
+/* utilitários */
+.orc-muted { color: var(--o-muted); }
+.orc-accent { color: var(--o-accent-ink); font-weight: 500; }
+.orc-small { font-size: 13.5px; }
+.orc-tiny { font-size: 11.5px; line-height: 1.4; }
+.orc-italic { font-style: italic; }
+.orc-tnum { font-variant-numeric: tabular-nums; }
+.orc-center { text-align: center; padding: 40px 0; }
+.orc-pad { padding-left: 16px; padding-right: 16px; }
+.orc-mb { margin-bottom: 16px; }
+.orc-label { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--o-muted); }
+.orc-honey { position: absolute; left: -9999px; width: 0; height: 0; opacity: 0; pointer-events: none; }
+
+/* cabeçalho */
+.orc-header {
+  flex: none; display: flex; align-items: center; gap: 10px; height: 52px; padding: 0 12px;
+  border-bottom: 1px solid var(--o-line);
+  background: color-mix(in oklab, var(--o-panel) 85%, transparent);
+  backdrop-filter: blur(8px);
+}
+.orc-back { display: inline-flex; align-items: center; gap: 4px; padding: 6px 8px; border-radius: 10px; color: var(--o-muted); font-size: 13.5px; }
+.orc-back:hover { color: var(--o-ink); background: var(--o-panel-2); }
+.orc-brand { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; letter-spacing: -.01em; color: var(--o-ink); }
+.orc-brand svg { color: var(--o-gold); }
+.orc-tabs { margin-left: auto; display: flex; gap: 4px; }
+.orc-tab { padding: 6px 10px; border-radius: 10px; font-size: 13.5px; color: var(--o-muted); }
+.orc-tab:hover { color: var(--o-ink); }
+.orc-tab-on { color: var(--o-accent-ink); background: color-mix(in oklab, var(--o-accent) 16%, transparent); }
+.orc-icon-btn { display: grid; place-items: center; padding: 8px; border-radius: 10px; color: var(--o-muted); }
+.orc-icon-btn:hover { color: var(--o-ink); background: var(--o-panel-2); }
+
+/* corpo: barra lateral + coluna principal */
+.orc-body { position: relative; flex: 1; min-height: 0; display: flex; }
+.orc-aside {
+  flex: none; width: 272px; display: flex; flex-direction: column; min-height: 0;
+  border-right: 1px solid var(--o-line); background: var(--o-panel);
+}
+.orc-aside-top { display: flex; align-items: center; gap: 8px; padding: 12px; }
+.orc-new {
+  flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 8px 12px;
+  border: 1px solid var(--o-line) !important; border-radius: 12px; background: var(--o-bg) !important; font-size: 14px; font-weight: 500;
+}
+.orc-new:hover { border-color: color-mix(in oklab, var(--o-accent) 55%, transparent) !important; }
+.orc-close { display: none; }
+.orc-convs { flex: 1; overflow-y: auto; padding: 6px 8px 12px; }
+.orc-conv { display: flex; align-items: center; border-radius: 10px; }
+.orc-conv:hover { background: var(--o-panel-2); }
+.orc-conv-on { background: color-mix(in oklab, var(--o-accent) 14%, transparent) !important; }
+.orc-conv-on .orc-conv-title { color: var(--o-accent-ink); font-weight: 500; }
+.orc-conv-title { flex: 1; min-width: 0; padding: 8px; text-align: left; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.orc-conv-del { padding: 8px; color: var(--o-muted); opacity: 0; }
+.orc-conv:hover .orc-conv-del, .orc-conv-on .orc-conv-del { opacity: .8; }
+.orc-conv-del:hover { color: var(--o-danger); }
+.orc-aside-foot { display: grid; gap: 8px; padding: 12px; border-top: 1px solid var(--o-line); }
+.orc-foot-link { display: block; padding: 9px 12px; border: 1px solid var(--o-line); border-radius: 12px; background: var(--o-bg); font-size: 13px; }
+.orc-foot-link:hover { border-color: color-mix(in oklab, var(--o-accent) 45%, transparent); }
+.orc-scrim { position: absolute; inset: 0; z-index: 40; background: rgb(0 0 0 / .5); }
+
+.orc-main { position: relative; flex: 1; min-width: 0; min-height: 0; display: flex; flex-direction: column; }
+.orc-embed-bar { flex: none; display: flex; align-items: center; gap: 6px; padding: 6px 8px; border-bottom: 1px solid var(--o-line); }
+.orc-embed-bar .orc-btn { margin-left: auto; }
+.orc-scroll { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
+.orc-col { width: 100%; max-width: 760px; margin: 0 auto; padding: 0 16px; }
+.orc-msgs { display: grid; gap: 24px; padding: 24px 0 24px; }
+
+/* estado vazio */
+.orc-hero { min-height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 48px 0 16px; }
+.orc-hero h1 { margin-top: 14px; font-size: clamp(22px, 4vw, 30px); font-weight: 650; letter-spacing: -.02em; }
+.orc-hero > p:last-of-type { margin-top: 6px; max-width: 420px; }
+.orc-hero-icon {
+  display: grid; place-items: center; width: 56px; height: 56px; border-radius: 18px; color: var(--o-gold);
+  background: radial-gradient(circle at 50% 40%, color-mix(in oklab, var(--o-accent) 35%, transparent), color-mix(in oklab, var(--o-accent) 10%, transparent));
+  box-shadow: 0 0 40px color-mix(in oklab, var(--o-accent) 30%, transparent);
+}
+.orc-examples { margin-top: 26px; display: grid; gap: 8px; width: 100%; max-width: 560px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+.orc-example { padding: 12px 16px; text-align: left; font-size: 14px; border: 1px solid var(--o-line) !important; border-radius: 16px; background: var(--o-panel) !important; }
+.orc-example:hover { border-color: color-mix(in oklab, var(--o-accent) 55%, transparent) !important; }
+
+/* mensagens */
+.orc-user { display: flex; justify-content: flex-end; }
+.orc-bubble { max-width: 85%; white-space: pre-wrap; padding: 10px 16px; border-radius: 18px 18px 6px 18px; background: var(--o-accent); color: #fff; font-size: 15.5px; line-height: 1.4; }
+.orc-assistant { display: flex; gap: 12px; }
+.orc-avatar { flex: none; display: grid; place-items: center; width: 28px; height: 28px; margin-top: 2px; border-radius: 999px; color: var(--o-gold); background: color-mix(in oklab, var(--o-accent) 18%, transparent); }
+.orc-answer { flex: 1; min-width: 0; display: grid; gap: 12px; }
+.orc-error { padding: 8px 12px; border-radius: 12px; font-size: 14px; color: var(--o-danger); background: color-mix(in oklab, #ef4444 14%, transparent); }
+.orc-dots { display: flex; align-items: center; gap: 8px; padding: 4px 0; font-size: 14px; color: var(--o-muted); }
+.orc-dots span { display: flex; gap: 4px; }
+.orc-dots i { width: 6px; height: 6px; border-radius: 999px; background: var(--o-accent); animation: orc-pulse 1.2s ease-in-out infinite; }
+@keyframes orc-pulse { 0%, 100% { opacity: .3; } 50% { opacity: 1; } }
+
+/* markdown */
+.orc-md { display: grid; gap: 12px; font-size: 16px; line-height: 1.65; }
+.orc-md ul, .orc-md ol { display: grid; gap: 6px; padding-left: 20px; }
+.orc-md li::marker { color: var(--o-muted); }
+.orc-md h3 { padding-top: 4px; font-size: 16px; font-weight: 600; }
+.orc-md blockquote { padding-left: 12px; border-left: 2px solid color-mix(in oklab, var(--o-accent) 45%, transparent); color: var(--o-muted); }
+.orc-md code { padding: 1px 5px; border-radius: 5px; font-size: .9em; background: var(--o-line); }
+.orc-md strong { font-weight: 650; }
+.orc-chip {
+  display: inline-flex !important; align-items: center; margin: 0 2px; padding: 0 6px !important; vertical-align: baseline;
+  border: 1px solid color-mix(in oklab, var(--o-accent) 40%, transparent) !important; border-radius: 999px;
+  background: color-mix(in oklab, var(--o-accent) 16%, transparent) !important; color: var(--o-accent-ink) !important;
+  font-size: 11.5px !important; font-weight: 600; line-height: 18px;
+}
+.orc-chip:hover { background: color-mix(in oklab, var(--o-accent) 28%, transparent) !important; }
+
+/* fontes */
+.orc-sources { display: grid; gap: 8px; }
+.orc-card { border: 1px solid var(--o-line); border-radius: 16px; background: var(--o-panel); overflow: hidden; }
+.orc-card > .orc-label { padding: 10px 16px 0; }
+.orc-list { list-style: none; }
+.orc-list > li + li { border-top: 1px solid var(--o-line); }
+.orc-list-top { border-top: 1px solid var(--o-line); }
+.orc-details summary { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; cursor: pointer; list-style: none; font-size: 14px; font-weight: 500; color: var(--o-muted); }
+.orc-details summary::-webkit-details-marker { display: none; }
+.orc-details summary:hover { color: var(--o-ink); }
+.orc-caret { transition: transform .15s; }
+.orc-details[open] .orc-caret { transform: rotate(180deg); }
+.orc-source { display: flex; gap: 10px; padding: 12px 16px; }
+.orc-ref { flex: none; display: grid; place-items: center; min-width: 20px; height: 20px; margin-top: 2px; padding: 0 4px; border-radius: 6px; font-size: 11px; font-weight: 600; color: var(--o-accent-ink); background: color-mix(in oklab, var(--o-accent) 16%, transparent); }
+.orc-source-body { flex: 1; min-width: 0; }
+.orc-source-head { font-size: 14px; font-weight: 500; }
+.orc-source-text { margin-top: 4px; font-size: 14px; line-height: 1.6; color: var(--o-muted); }
+.orc-source-actions { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.orc-btn { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border: 1px solid var(--o-line) !important; border-radius: 10px; font-size: 12.5px; color: var(--o-muted) !important; }
+.orc-btn:hover { color: var(--o-ink) !important; border-color: color-mix(in oklab, var(--o-accent) 50%, transparent) !important; }
+.orc-btn-accent { border-color: transparent !important; background: var(--o-accent) !important; color: #fff !important; font-weight: 500; }
+.orc-btn-accent:hover { opacity: .9; color: #fff !important; }
+.orc-flash { animation: orc-flash 2.4s ease-out; }
+@keyframes orc-flash { 0%, 40% { background: color-mix(in oklab, var(--o-accent) 22%, transparent); } 100% { background: transparent; } }
+
+/* composer */
+.orc-composer { flex: none; padding: 8px 0 10px; background: linear-gradient(to top, var(--o-bg) 70%, transparent); }
+.orc-form {
+  position: relative; display: flex; align-items: flex-end; gap: 8px; padding: 8px;
+  border: 1px solid var(--o-line); border-radius: 18px; background: var(--o-panel);
+}
+.orc-form:focus-within { border-color: color-mix(in oklab, var(--o-accent) 60%, transparent); box-shadow: 0 0 0 4px color-mix(in oklab, var(--o-accent) 14%, transparent); }
+.orc-form textarea {
+  flex: 1; min-height: 40px; max-height: 200px; resize: none; padding: 8px; border: 0; outline: none;
+  background: transparent; color: var(--o-ink); font: inherit; font-size: 16px; line-height: 1.4;
+}
+.orc-form textarea::placeholder { color: color-mix(in oklab, var(--o-muted) 75%, transparent); }
+.orc-send { flex: none; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 12px; background: var(--o-accent) !important; color: #fff !important; transition: opacity .15s; }
+.orc-send:disabled { opacity: .35; }
+.orc-stop { background: var(--o-ink) !important; color: var(--o-bg) !important; }
+.orc-hint { margin-top: 6px; text-align: center; font-size: 11px; color: var(--o-muted); }
+
+/* aulas */
+.orc-page { padding-top: 24px; padding-bottom: 64px; }
+.orc-h1 { font-size: 24px; font-weight: 650; letter-spacing: -.02em; }
+.orc-module { margin-top: 28px; }
+.orc-module > .orc-label { margin-bottom: 8px; }
+.orc-lesson { display: flex; align-items: center; gap: 12px; padding: 12px 16px; }
+.orc-lesson-n { flex: none; display: grid; place-items: center; width: 36px; height: 36px; border-radius: 12px; font-size: 14px; font-weight: 600; color: var(--o-accent-ink); background: color-mix(in oklab, var(--o-accent) 16%, transparent); }
+.orc-lesson-body { flex: 1; min-width: 0; display: grid; }
+.orc-lesson-title { font-size: 15px; font-weight: 500; line-height: 1.35; }
+
+/* telas estreitas e painel/iframe: lista de conversas vira gaveta */
+.orc-only-narrow { display: none; }
+@media (max-width: 899px) {
+  .orc-only-narrow { display: grid; }
+  .orc-aside { position: absolute; top: 0; bottom: 0; left: 0; z-index: 50; transform: translateX(-100%); transition: transform .2s; box-shadow: 0 0 40px rgb(0 0 0 / .4); }
+  .orc-aside-open { transform: none; }
+  .orc-close { display: grid; }
+}
+.orc-embed .orc-aside { position: absolute; top: 0; bottom: 0; left: 0; z-index: 50; transform: translateX(-100%); transition: transform .2s; box-shadow: 0 0 40px rgb(0 0 0 / .4); }
+.orc-embed .orc-aside-open { transform: none; }
+.orc-embed .orc-close { display: grid; }
+@media (max-width: 480px) {
+  .orc-hide-xs { display: none; }
+  .orc-tab { padding: 6px 8px; }
+}
