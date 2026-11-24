@@ -765,14 +765,11 @@ const adj = (c: RGB, d: number): RGB => {
 const DISCO = ["#ff4fd8", "#45f0ff", "#ffd25e", "#7cf06b", "#a06bff", "#ff8a3a"].map(C);
 const HALL_A = C("#5f6a8e"), HALL_B = C("#56618a");
 const NEON = C("#7af8ff"), NEON_G = C("#2fb7d6"), PINK = C("#ff6ae0"), PINK_G = C("#b83aa8");
-const WOOD = ["#b5713c", "#c2804a", "#a86635", "#bb7843"].map(C), WOOD_SEAM = C("#6b3e1e");
-const GREEN_A = C("#3f9a5a"), GREEN_B = C("#3a9054");
+const OAK = ["#d8b07a", "#e2bc88", "#cfa56e", "#dcb47f"].map(C);
 
 function inRect(tx: number, ty: number, x0: number, y0: number, x1: number, y1: number) {
   return tx >= x0 && tx < x1 && ty >= y0 && ty < y1;
 }
-const isTaverna = (x: number, y: number) => x >= 0 && x <= 9 && y >= 30 && y <= 37;
-const isNichos = (x: number, y: number) => x >= 27 && x <= 35 && y >= 1 && y <= 8;
 const AUD_RED = [C("#7a1a30"), C("#701628")], AUD_EDGE = C("#ffc93a");
 
 /** Colour of the floor at fractional tile coords (pixel shader). px = 1/32 tile along each axis per screen row. */
@@ -842,42 +839,17 @@ function floorColor(tx: number, ty: number): RGB {
       return d > 3.0 ? C("#4c2a88") : C("#5b2f9e");
     }
   }
-  // taverna rug
-  if (inRect(tx, ty, 4.4, 32.6, 8.6, 36.5)) {
-    if (!inRect(tx, ty, 4.55, 32.75, 8.45, 36.35)) return C("#ffc93a");
-    const u = (tx - 6.5) * 2, v = (ty - 34.55) * 2;
-    const m = (Math.abs(u - Math.round(u)) + Math.abs(v - Math.round(v)));
-    return m < 0.18 ? C("#ffc93a") : m < 0.5 ? C("#a8233a") : C("#8a1a2c");
-  }
-  // lounge rug (blue sofas)
-  if (inRect(tx, ty, 28.4, 13.4, 33.6, 18.6)) {
-    if (!inRect(tx, ty, 28.55, 13.55, 33.45, 18.45)) return C("#e8ecf5");
-    const d = Math.hypot(tx - 30.5, ty - 16.2);
-    return d < 1.2 ? C("#7af8ff") : d < 1.35 ? C("#e8ecf5") : (Math.floor((tx + ty) * 2) % 2 ? C("#2a4aa8") : C("#2f54b8"));
-  }
-  // biblioteca rug
-  if (inRect(tx, ty, 2.4, 11.4, 8.6, 15.6)) {
-    if (!inRect(tx, ty, 2.55, 11.55, 8.45, 15.45)) return C("#c9a8ff");
-    return (Math.floor(tx * 2) + Math.floor(ty * 2)) % 2 ? C("#4a2f7a") : C("#42296e");
-  }
-  // nichos rug
-  if (inRect(tx, ty, 27.5, 5.8, 33.6, 8.6)) {
-    if (!inRect(tx, ty, 27.62, 5.92, 33.48, 8.48)) return C("#e8f0d0");
-    return (Math.floor(tx * 2) + Math.floor(ty * 2)) % 2 ? C("#2a6e44") : C("#24603b");
-  }
-  // Sala de TV: retro wall-to-wall carpet + a round rug under the sofas
-  if (tx >= 35.94 && ty < 12) {
-    if (tx < 36.06) return C("#ffc93a");
-    if (ty > 11.94) return C("#ffc93a");
-    const d = Math.hypot((tx - 39.5) * 0.8, ty - 5.2);
-    if (d < 3.6) {
-      if (d > 3.42) return C("#ffe6b0");
-      if (d > 3.2) return C("#c84a2a");
-      const ring = Math.floor(d * 2.2) % 2;
-      return ring ? C("#e8783a") : C("#f2a24a");
-    }
-    let c = (Math.floor(tx * 2) + Math.floor(ty * 2)) % 2 ? C("#5a2e3e") : C("#542a3a");
-    if (hash(Math.floor(tx * 16), Math.floor(ty * 16)) > 0.93) c = adj(c, 14);
+  // Coworking: warm light-oak floor with a teal inlay border (wing x 44..57, y 0..19)
+  if (tx >= 43.94 && ty < 20) {
+    if (tx < 44.06 || ty > 19.94) return C("#3fd0a6");
+    const plank = Math.floor(tx * 4);
+    const pf = tx * 4 - plank;
+    if (pf < 1 / 8) return C("#8a6a44");
+    const run = ty + hash(plank, 7) * 3;
+    const seg = Math.floor(run / 1.5);
+    if (run / 1.5 - seg < 1 / 48) return C("#8a6a44");
+    let c = OAK[Math.floor(hash(seg, plank + 99) * OAK.length)];
+    if (pf < 3 / 8) c = adj(c, 10);
     return c;
   }
   // neon frame around the lounge
@@ -889,27 +861,6 @@ function floorColor(tx: number, ty: number): RGB {
   if (nf === 2) return NEON;
   if (nf === 1) return NEON_G;
 
-  // taverna wood planks (run along x)
-  if (isTaverna(ix, iy)) {
-    const plank = Math.floor(ty * 4);
-    const pf = ty * 4 - plank;
-    if (pf < 1.5 / 8) return WOOD_SEAM;
-    const run = tx + hash(plank, 3) * 3;
-    const seg = Math.floor(run / 1.5);
-    if (run / 1.5 - seg < 1 / 48) return WOOD_SEAM;
-    let c = WOOD[Math.floor(hash(seg, plank) * WOOD.length)];
-    if (pf < 3 / 8) c = adj(c, 14);
-    if (hash(Math.floor(tx * 24), plank) > 0.93) c = adj(c, -18);
-    return c;
-  }
-  // nichos carpet
-  if (isNichos(ix, iy)) {
-    let c = (ix + iy) % 2 ? GREEN_A : GREEN_B;
-    if (hash(Math.floor(tx * 32), Math.floor(ty * 32)) > 0.9) c = adj(c, 16);
-    if (edgeHi) c = adj(c, 12);
-    else if (edgeLo) c = adj(c, -18);
-    return c;
-  }
   // main hall: slate checker with bevelled tile edges
   let c = (ix + iy) % 2 ? HALL_A : HALL_B;
   const n = hash(ix, iy);
@@ -932,8 +883,6 @@ export const SCREEN_IN = { x: SCREEN.x + 4, y: SCREEN.top + 4, w: SCREEN.w - 8, 
 /** Sala de TV wall TV (right wall, x 36.7..42.2) + its inner 16:9 area, in right-wall texture px. */
 export const TV_SCREEN = { x: Math.round(RX(36.7)), w: 176, top: ZR(132), h: 102 };
 export const TV_SCREEN_IN = { x: TV_SCREEN.x + 4, y: TV_SCREEN.top + 4, w: TV_SCREEN.w - 8, h: TV_SCREEN.h - 8 };
-/** "Lives anteriores" poster next to the TV. */
-const TV_POSTER = { x: Math.round(RX(42.55)), w: 42, top: ZR(128), h: 58 };
 /** Floor-canvas transform of the right wall: texture (i, row) -> (ORIGIN_X + i, ORIGIN_Y - WALL_H + row + i/2). */
 export const RIGHT_WALL_SHEAR = [1, 0.5, 0, 1] as const;
 
@@ -1049,53 +998,23 @@ function buildRightWall() {
     rect(ctx, nx + 2, ZR(110), 8, 44, "#ff4fd8");
     rect(ctx, nx + 4, ZR(108), 4, 40, "#ffc4f2");
   }
-  // niches cork board
-  const bX = RX(27.6), bW = RX(33.6) - bX, bTop = ZR(116), bH = 76;
-  frame(ctx, bX, bTop, bW, bH, "#8a5a32");
-  rect(ctx, bX + 4, bTop + 14, bW - 8, bH - 18, "#d8a868");
-  const R = rng(42);
-  for (let i = 0; i < 60; i++) rect(ctx, bX + 4 + R() * (bW - 9), bTop + 14 + R() * (bH - 19), 1, 1, "#b8864a");
-  rect(ctx, bX + 4, bTop + 3, bW - 8, 10, "#2f9a58");
-  pixText(ctx, "CANTO DOS NICHOS", bX + Math.floor((bW - pixTextW("CANTO DOS NICHOS", 9)) / 2), bTop + 3, 9, "#ffffff");
-  const notes = ["#ffe68a", "#9fe6ff", "#ffb0b0", "#b8f0b8", "#fff6e0", "#ffc890", "#e0b8ff"];
-  let k = 0;
-  for (let rr = 0; rr < 3; rr++)
-    for (let q = 0; q < 6; q++) {
-      const nx = bX + 10 + q * 30 + Math.floor(R() * 6), ny = bTop + 18 + rr * 18 + Math.floor(R() * 3);
-      rect(ctx, nx, ny, 20, 14, notes[k++ % notes.length]);
-      rect(ctx, nx + 3, ny + 5, 14, 1, "#8a90aa");
-      rect(ctx, nx + 3, ny + 8, 10, 1, "#8a90aa");
-      rect(ctx, nx + 9, ny - 1, 3, 3, "#e8283c");
-    }
-  // Sala de TV: big wall TV (idle picture until a past live plays on it) + "Lives anteriores" poster
+  // Coworking wing: windows on both sides + a "COWORKING / foco total" board over the desks
+  cityWindow(ctx, RX(44.8), 54, 17);
+  cityWindow(ctx, RX(54.4), 54, 21);
   {
-    const { x: tX, w: tW, top: tTop, h: tH } = TV_SCREEN;
-    rect(ctx, tX - 3, tTop - 3, tW + 6, tH + 6, "#0b0a10");
-    frame(ctx, tX - 2, tTop - 2, tW + 4, tH + 4, "#1c1d26");
-    const iX = tX + 4, iY = tTop + 4, iW = tW - 8, iH = tH - 8;
-    for (let i = 0; i < iH; i++) rect(ctx, iX, iY + i, iW, 1, i < iH * 0.5 ? "#101a3a" : "#0c1430");
-    // idle screen: a "menu" of tape cards and a play badge
-    const R2 = rng(77);
-    for (let q = 0; q < 4; q++) {
-      const cx0 = iX + 12 + q * 38, cy0 = iY + 26;
-      rect(ctx, cx0, cy0, 32, 20, ["#2f6fdc", "#a3203a", "#2f9a58", "#8a4fd8"][q]);
-      rect(ctx, cx0 + 3, cy0 + 24, 26, 2, "#5a6ab8");
-      rect(ctx, cx0 + 3, cy0 + 28, 18 + Math.floor(R2() * 8), 2, "#3a4a88");
-      fillPoly(ctx, [cx0 + 13, cy0 + 6, cx0 + 13, cy0 + 14, cx0 + 20, cy0 + 10], "#ffffff");
+    const bX = RX(47.6), bW = RX(53.4) - bX, bTop = ZR(118), bH = 70;
+    frame(ctx, bX, bTop, bW, bH, "#e8ecf5");
+    rect(ctx, bX + 4, bTop + 4, bW - 8, bH - 8, "#f6f8fc");
+    rect(ctx, bX + 4, bTop + 4, bW - 8, 14, "#2aa889");
+    pixText(ctx, "COWORKING", bX + Math.floor((bW - pixTextW("COWORKING", 11)) / 2), bTop + 5, 11, "#ffffff");
+    pixText(ctx, "foco total", bX + Math.floor((bW - pixTextW("foco total", 7)) / 2), bTop + 24, 7, "#2a2d3a");
+    // little to-do list + a progress bar
+    for (let i = 0; i < 3; i++) {
+      rect(ctx, bX + 14, bTop + 38 + i * 9, 5, 5, i < 2 ? "#2aa889" : "#c8ccd8");
+      rect(ctx, bX + 24, bTop + 39 + i * 9, 40 + ((i * 17) % 30), 2, "#8a90aa");
     }
-    pixText(ctx, "LIVES ANTERIORES", iX + Math.floor((iW - pixTextW("LIVES ANTERIORES", 9)) / 2), iY + 8, 9, "#ffd25e");
-    pixText(ctx, "clique pra assistir", iX + Math.floor((iW - pixTextW("clique pra assistir", 7)) / 2), iY + iH - 16, 7, "#9fb4ff");
-    rect(ctx, tX + tW - 10, tTop + tH - 2, 4, 1, "#3ddc84"); // power LED on the bezel
-    const { x: pX, w: pW, top: pTop, h: pH } = TV_POSTER;
-    frame(ctx, pX, pTop, pW, pH, "#c9a040");
-    rect(ctx, pX + 3, pTop + 3, pW - 6, pH - 6, "#a3203a");
-    for (let y = pTop + 5; y < pTop + pH - 5; y += 6) {
-      rect(ctx, pX + 5, y, 3, 3, "#1a0f14");
-      rect(ctx, pX + pW - 8, y, 3, 3, "#1a0f14");
-    }
-    pixText(ctx, "LIVES", pX + Math.floor((pW - pixTextW("LIVES", 9)) / 2), pTop + 8, 9, "#ffe68a");
-    fillPoly(ctx, [pX + pW / 2 - 6, pTop + 24, pX + pW / 2 - 6, pTop + 40, pX + pW / 2 + 8, pTop + 32], "#ffffff");
-    pixText(ctx, "ANTIGAS", pX + Math.floor((pW - pixTextW("ANTIGAS", 7)) / 2), pTop + pH - 15, 7, "#ffe68a");
+    rect(ctx, bX + bW - 70, bTop + 44, 56, 6, "#d8dce8");
+    rect(ctx, bX + bW - 70, bTop + 44, 38, 6, "#ffc93a");
   }
   return c;
 }
@@ -1124,28 +1043,6 @@ function buildLeftWall() {
   fillPoly(ctx, [gX + gW / 2 - 16, ZR(92), gX + gW / 2, ZR(86), gX + gW / 2 + 16, ZR(92), gX + gW / 2 + 16, ZR(76), gX + gW / 2, ZR(70), gX + gW / 2 - 16, ZR(76)], "#ffc93a");
   rect(ctx, gX + gW / 2 - 1, ZR(88), 2, 18, "#b8861e");
   pixText(ctx, "GRIMÓRIO", gX + Math.floor((gW - pixTextW("GRIMÓRIO", 9)) / 2), ZR(110), 9, "#ffe68a");
-  // Taverna back bar: bottle shelves + neon sign
-  const tX = LX(36.4), tW = LX(30.6) - tX;
-  rect(ctx, tX, ZR(96), tW, 56, "#2a1d40");
-  for (const z of [62, 88]) {
-    rect(ctx, tX, ZR(z), tW, 4, "#c58a50");
-    rect(ctx, tX, ZR(z) + 4, tW, 1, "#6b3e1e");
-    let x = tX + 4;
-    while (x < tX + tW - 8) {
-      const col = ["#2f9a58", "#a3203a", "#ffc93a", "#45f0ff", "#8a5a32", "#f2efe6", "#ff7ad0"][Math.floor(R() * 7)];
-      const hgt = 14 + Math.floor(R() * 8);
-      rect(ctx, x, ZR(z) - hgt, 6, hgt, col);
-      rect(ctx, x + 2, ZR(z) - hgt - 5, 2, 5, col);
-      rect(ctx, x + 1, ZR(z) - hgt + 2, 1, hgt - 4, shade(col, 0.4));
-      x += 9 + Math.floor(R() * 4);
-    }
-  }
-  const sign = "TAVERNA";
-  const sw = pixTextW(sign, 18);
-  const sX = tX + Math.floor((tW - sw) / 2);
-  rect(ctx, sX - 8, ZR(126), sw + 16, 27, "#1a1230");
-  pixText(ctx, sign, sX + 1, ZR(124), 18, "#ff6a1a");
-  pixText(ctx, sign, sX, ZR(125), 18, "#ffd2a0");
   // wall sconces
   for (const y of [4.2, 12.4, 19.5, 23.2, 26.5, 31.5]) {
     const x = LX(y);
@@ -1221,11 +1118,8 @@ export function buildFloor(): HTMLCanvasElement {
 export function wallHit(wx: number, wy: number): "nichos" | "palco" | "tv" | null {
   const xt = (wx - ORIGIN_X) / (TW / 2);
   const zr = ORIGIN_Y + xt * (TH / 2) - wy; // height above floor on the right wall plane
-  if (xt > 27.6 && xt < 33.6 && zr > 38 && zr < 118) return "nichos";
   const sx0 = SCREEN.x / (TW / 2), sx1 = (SCREEN.x + SCREEN.w) / (TW / 2);
   if (xt > sx0 && xt < sx1 && zr > WALL_H - SCREEN.top - SCREEN.h && zr < WALL_H - SCREEN.top) return "palco";
-  const tx0 = TV_SCREEN.x / (TW / 2), tx1 = (TV_POSTER.x + TV_POSTER.w) / (TW / 2);
-  if (xt > tx0 && xt < tx1 && zr > WALL_H - TV_SCREEN.top - TV_SCREEN.h && zr < WALL_H - TV_SCREEN.top + 2) return "tv";
   return null;
 }
 

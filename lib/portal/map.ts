@@ -1,7 +1,7 @@
-// Salão do Grimório: static room layout shared by every client (pathfinding must be deterministic).
+// Salão do Grimório: static room layout (since 2026-11-17 only Palco/Plateia, Mesa do Oráculo and Coworking) shared by every client (pathfinding must be deterministic).
 // Also imported by the realtime worker (realtime/src/index.ts) for bounds, spawn and seats: keep it DOM-free.
 
-export const MAP_W = 44; // 36 + the Sala de TV wing (x 36..43)
+export const MAP_W = 58; // 36 + the Sala de TV wing (x 36..43) + the Coworking wing (x 44..57)
 export const MAP_H = 38;
 export const SPAWN = { x: 17, y: 35 };
 export const VOICE_RADIUS = 4.5; // tiles
@@ -13,9 +13,7 @@ export const ZONES: Zone[] = [
   { id: "palco", name: "Palco das Lives", x0: 11, y0: 1, x1: 22, y1: 5, color: "gold" },
   { id: "plateia", name: "Plateia", x0: 10, y0: 7, x1: 23, y1: 17, color: "red" },
   { id: "oraculo", name: "Mesa do Oráculo", x0: 1, y0: 20, x1: 7, y1: 26, color: "blue" },
-  { id: "nichos", name: "Canto dos Nichos", x0: 27, y0: 1, x1: 33, y1: 8, color: "green" },
-  { id: "taverna", name: "Taverna", x0: 1, y0: 30, x1: 9, y1: 37, color: "amber" },
-  { id: "tv", name: "Sala de TV", x0: 36, y0: 0, x1: 43, y1: 11, color: "cyan" },
+  { id: "cowork", name: "Coworking", x0: 44, y0: 0, x1: 57, y1: 19, color: "teal" },
 ];
 
 /** Inside this rectangle (stage + audience + its edges) the live plays on the stage screen automatically. */
@@ -23,8 +21,9 @@ export const LIVE_ZONE = { x0: 9, y0: 0, x1: 24, y1: 18 };
 export const inLiveZone = (x: number, y: number) =>
   x >= LIVE_ZONE.x0 - 0.5 && x <= LIVE_ZONE.x1 + 0.5 && y >= LIVE_ZONE.y0 - 0.5 && y <= LIVE_ZONE.y1 + 0.5;
 
-/** Sala de TV (past lives on the wall TV): inside it the TV plays at full volume and the camera frames the screen. */
-export const TV_ZONE = { x0: 36, y0: 0, x1: 43, y1: 11 };
+/** Sala de TV (past lives on the wall TV): inside it the TV plays at full volume and the camera frames the screen.
+ *  The room was removed on 2026-11-17 (simplified map): the zone sits off the map so nothing triggers it. */
+export const TV_ZONE = { x0: -100, y0: -100, x1: -99, y1: -99 };
 export const inTvZone = (x: number, y: number) =>
   x >= TV_ZONE.x0 - 0.5 && x <= TV_ZONE.x1 + 0.5 && y >= TV_ZONE.y0 - 0.5 && y <= TV_ZONE.y1 + 0.5;
 
@@ -35,10 +34,7 @@ export const ZONE_TAGS = [
   { x: 16.5, y: 6.6, text: "Palco das Lives", col: "#ffd700" },
   { x: 16.5, y: 17.7, text: "Plateia", col: "#ff8aa0" },
   { x: 4, y: 26.8, text: "Mesa do Oráculo", col: "#7cc8ff" },
-  { x: 30.5, y: 8.8, text: "Canto dos Nichos", col: "#6ee7a0" },
-  { x: 6, y: 37.4, text: "Taverna", col: "#ffb36a" },
-  { x: 4.6, y: 16.3, text: "Biblioteca", col: "#c9a8ff" },
-  { x: 39.5, y: 11.7, text: "Sala de TV", col: "#8ff0ff" },
+  { x: 50.5, y: 19.8, text: "Coworking", col: "#7df0c8" },
 ];
 
 export type Interact = "oraculo" | "mago" | "nichos" | "palco" | "grimorio" | "gato" | "links" | "tv";
@@ -88,15 +84,6 @@ for (const y of [8, 10, 12, 14, 16])
     if (y === 16) seat(x, y, "bench", "-y");
     else seat(x, y, "aud", "-y", { front: true });
 
-// ---------------------------------------------------------------- Biblioteca (quiet corner left of the audience)
-for (const y of [8, 9, 10, 11, 16, 17]) add(0, y, "bookshelf");
-add(0, 14, "mural", { interact: "links" }); // Mural de Links (opens the /links window)
-seat(3, 12, "sofaX0b", "+y");
-seat(4, 12, "sofaX1b", "+y");
-seat(7, 13, "sofaY0b", "-x", { front: true });
-seat(7, 14, "sofaY1b", "-x", { front: true });
-add(4, 14, "ctable");
-
 // ---------------------------------------------------------------- Mesa do Oráculo
 add(3, 22, "otable");
 add(4, 22, "otable");
@@ -107,63 +94,17 @@ for (const y of [20, 21, 25, 26]) add(0, y, "bookshelf");
 seat(6, 24, "stool", "-x");
 seat(5, 25, "stool", "-y");
 
-// ---------------------------------------------------------------- Canto dos Nichos (board on the back wall)
-add(28, 4, "desk", { interact: "nichos" });
-add(29, 4, "desk_pc", { interact: "nichos" });
-add(31, 4, "desk", { interact: "nichos" });
-add(32, 4, "desk_pc", { interact: "nichos" });
-for (const x of [28, 29, 31, 32]) seat(x, 5, "chair", "-y", { front: true });
-add(33, 7, "cauldron");
-
-// ---------------------------------------------------------------- Taverna: bar along x=2, stools, sofas, arcade, cat
-for (let y = 31; y <= 35; y++) add(2, y, y === 32 ? "bar_tap" : y === 34 ? "bar_glass" : "bar");
-add(1, 31, "barrels");
-add(1, 34, "barrels");
-for (const y of [31, 33, 35]) seat(3, y, "stool", "-x");
-seat(6, 32, "sofaX0", "+y");
-seat(7, 32, "sofaX1", "+y");
-seat(8, 34, "sofaY0", "-x", { front: true });
-seat(8, 35, "sofaY1", "-x", { front: true });
-add(6, 34, "ctable");
-add(0, 36, "arcade");
-add(0, 37, "arcade2");
-add(4, 37, "cat", { interact: "gato", solid: false, h: 0 });
-
-// ---------------------------------------------------------------- Lounge: blue sofas + high bar tables
-seat(29, 14, "sofaX0b", "+y");
-seat(30, 14, "sofaX1b", "+y");
-seat(32, 15, "sofaY0b", "-x", { front: true });
-seat(32, 16, "sofaY1b", "-x", { front: true });
-add(30, 16, "ctable");
-add(29, 22, "rtable");
-seat(28, 22, "stool", "+x");
-seat(30, 22, "stool", "-x");
-add(32, 20, "rtable");
-seat(32, 21, "stool", "-y");
-add(26, 27, "rtable");
-seat(25, 27, "stool", "+x");
-seat(27, 27, "stool", "-x");
-
-// ---------------------------------------------------------------- Jardim (benches by the entrance, right side)
-for (const x of [27, 28, 29]) seat(x, 33, "bench", "-y");
-
-// ---------------------------------------------------------------- Sala de TV (wing x 36..43): wall TV over a media console,
-// "Lives anteriores" poster + VHS shelf, sofas/armchairs/beanbags facing the TV (-y). New seats go last: SEATS indices are
-// shared with the worker, so existing ones never move.
-for (const x of [38, 39, 40]) add(x, 0, `tvstand${x - 38}`, { interact: "tv" });
-add(43, 0, "vhsshelf", { interact: "tv" });
-seat(37, 3, "beanbag", "-y");
-seat(41, 3, "beanbag", "-y");
-seat(36, 6, "tvarm", "-y", { front: true });
-for (const x of [38, 39, 40]) seat(x, 6, `tvsofa${x - 38}`, "-y", { front: true });
-seat(42, 6, "tvarm", "-y", { front: true });
-for (const x of [38, 39, 40]) seat(x, 9, `tvsofa${x - 38}`, "-y", { front: true });
-
-// ---------------------------------------------------------------- Centre: the Grimório pedestal (2x2)
-add(16, 24, "pedestal");
-add(17, 24, "pedestal");
-add(16, 25, "pedestal");
-add(17, 25, "pedestal_book", { interact: "grimorio" });
+// ---------------------------------------------------------------- Coworking (wing x 44..57, y 0..19): 4 rows of 5 desks with a PC,
+// chairs facing the back wall (-y), + a coffee corner.
+for (const y of [3, 7, 11, 15])
+  for (let x = 48; x <= 52; x++) {
+    add(x, y, "desk_pc");
+    seat(x, y + 1, "chair", "-y", { front: true });
+  }
+add(55, 17, "rtable");
+seat(54, 17, "stool", "+x");
+seat(56, 17, "stool", "-x");
+add(57, 15, "cauldron"); // the wing's coffee pot
 
 // Host NPC near the entrance
 add(NPC_POS.mago.x, NPC_POS.mago.y, "npc_mago", { interact: "mago" });
@@ -173,6 +114,10 @@ for (const [x, y] of [[0, 0], [10, 1], [24, 1], [35, 0], [0, 18], [35, 24], [12,
 for (const [x, y] of [[35, 11], [14, 37], [20, 37], [35, 37], [0, 7], [9, 7], [24, 7], [30, 33], [26, 33], [8, 28], [43, 11], [36, 0], [43, 24], [43, 37], [39, 30]]) add(x, y, "plant");
 for (const [x, y] of [[0, 5], [34, 9], [23, 33], [9, 26], [0, 13], [35, 30], [43, 7], [36, 10], [43, 18], [40, 37]]) add(x, y, "lamp");
 for (const [x, y] of [[43, 14], [43, 30]]) add(x, y, "palm");
+// coworking wing + the open floor below it
+for (const [x, y] of [[44, 0], [57, 0], [57, 9], [44, 19], [57, 19], [57, 37], [50, 30]]) add(x, y, "plant");
+for (const [x, y] of [[57, 4], [44, 9], [57, 12], [47, 26], [54, 26], [57, 33]]) add(x, y, "lamp");
+for (const [x, y] of [[45, 37], [52, 37]]) add(x, y, "palm");
 
 export const BLOCKS = blocks;
 

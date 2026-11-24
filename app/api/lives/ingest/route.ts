@@ -48,8 +48,12 @@ export async function POST(req: Request) {
   const label = liveLabel(started);
   const title = t.title.startsWith(label) ? t.title : `${label} – ${t.title}`;
 
-  // embed first (slow, outside any transaction)
-  const vecs = await embedPassages(chunks.map((ch) => `${title}\n${ch.text}`), 16);
+  // embed first (slow, outside any transaction). On Cloudflare Workers the local embedder is a stub:
+  // chunks then go in without vectors (full-text search still finds them).
+  const vecs: (number[] | null)[] = await embedPassages(chunks.map((ch) => `${title}\n${ch.text}`), 16).catch((e: unknown) => {
+    console.error("embed failed, storing chunks without vectors", e);
+    return chunks.map(() => null);
+  });
 
   const c = await pool.connect();
   try {
@@ -83,7 +87,7 @@ export async function POST(req: Request) {
       await c.query(
         `insert into curso.chunks (lesson_n, seg_from, seg_to, start_s, end_s, text, text_hash, embedding)
          values ($1,$2,$3,$4,$5,$6,$7,$8::extensions.vector)`,
-        [n, ch.seg_from, ch.seg_to, ch.start_s, ch.end_s, ch.text, hash, `[${vecs[i].join(",")}]`]);
+        [n, ch.seg_from, ch.seg_to, ch.start_s, ch.end_s, ch.text, hash, vecs[i] ? `[${vecs[i]!.join(",")}]` : null]);
     }
     await c.query(
       `insert into curso.portal_lives (live_id, lesson_n, title, started_at, duration) values ($1,$2,$3,$4,$5)
@@ -91,7 +95,7 @@ export async function POST(req: Request) {
          duration=excluded.duration, updated_at=now()`,
       [id, n, t.title, started.toISOString(), t.duration || 0]);
     await c.query("commit");
-    return out({ ok: true, lesson: n, segments: segs.length, chunks: chunks.length });
+    return out({ ok: true, lesson: n, segments: segs.length, chunks: chunks.length, vectors: vecs.some(Boolean) });
   } catch (e) {
     await c.query("rollback").catch(() => {});
     return out({ ok: false, error: String((e as Error).message || e).slice(0, 200) }, 500);

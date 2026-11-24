@@ -216,6 +216,8 @@ Sem domínio verificado o Resend só entrega para o próprio dono da conta. Isso
 
 ## Passo 9 — Site na Vercel
 
+> Alternativa: o site também roda em Cloudflare Workers, com o Oráculo limitado a busca por texto. Ver [docs/CLOUDFLARE.md](docs/CLOUDFLARE.md).
+
 **Quem:** 🧙 faz login; 🤖 faz o resto.
 
 1. 🤖 `npx vercel login` → 🧙 autoriza. Depois `npx vercel link` na raiz (criar projeto novo `portal-do-mago`, framework Next.js, sem mudar configurações).

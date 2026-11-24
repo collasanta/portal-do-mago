@@ -5,7 +5,8 @@ Comunidade online dos alunos do Mago do YouTube: o **Salão do Grimório**, uma 
 - **Palco das Lives**: o Mago transmite câmera e tela para a sala inteira (até ~300 pessoas), chama alunos para o palco, fixa avisos. A live é **gravada sozinha**.
 - **Lives anteriores** (`/lives`): as gravações, com player que abre no minuto certo.
 - **Oráculo** (`/oraculo`): responde dúvidas com base nas aulas do curso e nas lives gravadas, dizendo em qual aula e em que minuto aquilo foi dito.
-- **Mural de links** (`/links`), **Sala de TV**, mensagens diretas, moderação (mutar, expulsar, avisos).
+- **Coworking**: ala com 20 mesas e cantinho do café para a turma produzir junto.
+- **Mural de links** (`/links`), mensagens diretas, moderação (mutar, expulsar, avisos).
 - **Acesso por compra na Kiwify**: o aluno entra com o e-mail da compra (código de 6 dígitos por e-mail). Quem pede reembolso ou cancela perde o acesso sozinho.
 
 ![Tela de entrada](docs/screens/entrada.jpg)

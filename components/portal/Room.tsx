@@ -31,7 +31,7 @@ const MODALS: Record<Exclude<Interact, "oraculo" | "links" | "tv">, { title: str
           <li><b>Enter</b> abre o chat, <b>Esc</b> fecha a janela de cima.</li>
           <li>Chegue perto de alguém e liga o microfone: a conversa por voz começa sozinha.</li>
           <li>Dúvida do curso? Pergunta pro <b>Oráculo</b> na mesa da esquerda.</li>
-          <li>Mostre seu canal no <b>Canto dos Nichos</b> e cola na <b>Taverna</b> pra resenha.</li>
+          <li>Bora produzir junto? Puxa uma mesa no <b>Coworking</b>, à direita.</li>
         </ul>
       </>
     ),
@@ -561,10 +561,6 @@ export function Room({ profile, uid, adminKey, room, onLeave }: { profile: Profi
             <button className="pm-tb" onClick={() => setLives(true)} title="Lives anteriores" aria-label="Lives">
               <PixelIcon art={PX.tv} />
               <span>Lives</span>
-            </button>
-            <button className="pm-tb" onClick={() => setModal("nichos")} title="Canto dos Nichos" aria-label="Nichos">
-              <PixelIcon art={PX.board} />
-              <span>Nichos</span>
             </button>
             <div className="pm-pop-wrap">
               <button className={`pm-tb ${pop === "emotes" ? "sel" : ""}`} onClick={() => setPop((p) => (p === "emotes" ? null : "emotes"))} title="Emotes" aria-label="Emotes">

@@ -58,7 +58,7 @@ const MAGO_LINES = [
   "Clique no chão pra andar 🪄",
   "Chegue perto da galera pra conversar por voz",
   "Dúvida do curso? Fala com o Oráculo ali na mesa",
-  "Mostre seu canal no Canto dos Nichos!",
+  "Bora produzir? O Coworking fica à direita",
 ];
 
 export class Engine {

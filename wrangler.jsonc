@@ -1,0 +1,18 @@
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	// OPCIONAL: deploy do site em Cloudflare Workers (OpenNext) no lugar da Vercel. `npm run cf:deploy`. Ver docs/CLOUDFLARE.md.
+	// Secrets (ORACULO_*, ANTHROPIC_*, KIWIFY_*, ...) are Worker secrets: `wrangler secret bulk`.
+	// The Oráculo's local e5 embedder (onnxruntime-node) does not run on Workers: CF_BUILD aliases
+	// @huggingface/transformers to lib/cf/transformers-stub.mjs, so questions fall back to full-text search there.
+	"main": ".open-next/worker.js",
+	"name": "portal-do-mago",
+	"compatibility_date": "2026-11-01",
+	"compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+	"assets": { "directory": ".open-next/assets", "binding": "ASSETS" },
+	"services": [{ "binding": "WORKER_SELF_REFERENCE", "service": "portal-do-mago" }],
+	// Postgres (Supabase, session pooler :5432). Workers can't verify Supabase's TLS cert directly; Hyperdrive
+	// connects and pools for us (lib/oraculo/db.ts reads env.HYPERDRIVE.connectionString).
+	// Crie o seu: `npx wrangler hyperdrive create portal-do-mago-db --connection-string="postgres://...:5432/postgres"` e cole o id abaixo.
+	"hyperdrive": [{ "binding": "HYPERDRIVE", "id": "COLE-O-ID-DO-SEU-HYPERDRIVE" }],
+	"observability": { "enabled": true }
+}

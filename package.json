@@ -16,24 +16,29 @@
     "course:ingest": "node cli/fetch-model.mjs && node cli/ingest.mjs",
     "course:chapters": "node cli/fetch-model.mjs && node cli/chapters.mjs",
     "secrets": "node cli/new-secrets.mjs",
-    "vercel:env": "node cli/vercel-env-push.mjs"
+    "vercel:env": "node cli/vercel-env-push.mjs",
+    "cf:build": "CF_BUILD=1 CLOUDFLARE_HYPERDRIVE_LOCAL_CONNECTION_STRING_HYPERDRIVE=postgres://local@127.0.0.1:5432/unused opennextjs-cloudflare build && node cli/cf-strip-env.mjs",
+    "cf:preview": "npm run cf:build && CLOUDFLARE_HYPERDRIVE_LOCAL_CONNECTION_STRING_HYPERDRIVE=postgres://local@127.0.0.1:5432/unused opennextjs-cloudflare preview",
+    "cf:deploy": "npm run cf:build && CLOUDFLARE_HYPERDRIVE_LOCAL_CONNECTION_STRING_HYPERDRIVE=postgres://local@127.0.0.1:5432/unused opennextjs-cloudflare deploy"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^1.3.0",
     "@huggingface/transformers": "^4.3.2",
-    "next": "16.4.3",
+    "next": "^16.4.6",
     "pg": "^8.23.1",
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "server-only": "^0.0.1"
   },
   "devDependencies": {
+    "@opennextjs/cloudflare": "^1.20.17",
     "@types/node": "^20",
     "@types/pg": "^8.23.1",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "16.4.3",
-    "typescript": "^5"
+    "eslint-config-next": "^16.4.6",
+    "typescript": "^5",
+    "wrangler": "^4.164.0"
   }
 }

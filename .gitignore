@@ -40,6 +40,10 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# cloudflare (OpenNext)
+/.open-next
+/.wrangler
+
 # conteúdo do curso (pago): NUNCA vai pro git. Entregue em privado.
 /course-data/
 /models/
